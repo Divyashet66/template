@@ -1,0 +1,22 @@
+{
+  "name": "youcandraw",
+  "version": "1.0.0",
+  "description": "To execute script  `node exec.js`",
+  "main": "exec.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ganeshkumarm1/youcandraw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ganeshkumarm1/youcandraw/issues"
+  },
+  "homepage": "https://github.com/ganeshkumarm1/youcandraw#readme",
+  "dependencies": {
+    "child_process": "^1.0.2"
+  }
+}
