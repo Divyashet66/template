@@ -1,4 +1,4 @@
-pack build draw --path src -t gcr.io/tech-rnd-project/draw --builder paketobuildpacks/builder:full
+pack build todo -t gcr.io/tech-rnd-project/todo --builder paketobuildpacks/builder:full
 pid=$!
 echo "process 1 running"
 wait $pid
