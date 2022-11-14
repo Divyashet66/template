@@ -1,6 +1,4 @@
 # note
-to copy template 
-`sh copy.sh`
 
 give execute permission to script
 `chmod +x template/editor/script.sh`
