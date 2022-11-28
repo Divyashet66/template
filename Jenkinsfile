@@ -8,8 +8,8 @@ pipeline {
 	
 	environment {
 		PROJECT_ID = 'tech-rnd-project'
-                CLUSTER_NAME = 'jenkins-jen-cluster'
-                LOCATION = 'asia-south1-a'
+                CLUSTER_NAME = 'demo-cluster'
+                LOCATION = 'us-central1-c'
                 CREDENTIALS_ID = 'kubernetes'	
 	}
 	
@@ -25,20 +25,23 @@ pipeline {
                   sh 'npm install'
               }
           }
-
+	    
 	    
 	    stage('Build Docker Image') {
 		    steps {
 			    sh 'whoami'
 			    sh 'sudo chmod 777 /var/run/docker.sock'
 			    
+			    sh 'sudo apt update'
+ 			    sh 'sudo apt install software-properties-common -y'
+ 			    sh 'sudo apt-get install nano'
+			    
 				    
 				sh 'sudo add-apt-repository ppa:cncf-buildpacks/pack-cli'
  				 sh 'sudo  apt-get update'
  				  sh 'sudo apt-get install pack-cli'
 			   
-				  sh 'pack build app --builder paketobuildpacks/builder:full'
-			    	  sh "sudo docker tag app:latest gcr.io/tech-rnd-project/faz-todo:${env.BUILD_ID}"
+				  sh 'pack build app -t gcr.io/tech-rnd-project/faz-todo --builder paketobuildpacks/builder:full'
 			    
 		    }
 	    }
@@ -47,10 +50,9 @@ pipeline {
 		    steps {
 			    script {
 				    echo "Push Docker Image"
-				        sh "gcloud auth configure-docker"
-				    
-				        sh "sudo docker push gcr.io/tech-rnd-project/faz-todo:${env.BUILD_ID}"
-				    
+				        sh 'gcloud auth configure-docker'
+				    	sh 'docker push gcr.io/tech-rnd-project/faz-todo'
+				
 					sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
 
 					sh "chmod +x kubectl"
@@ -67,7 +69,6 @@ pipeline {
 			    echo "Deployment started ..."
 			    sh 'ls -ltr'
 			    sh 'pwd'
-				sh "sed -i 's/tagversion/${env.BUILD_ID}/g' deployment.yaml"
 				echo "Start deployment of deployment.yaml"
 				step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 			    	echo "Deployment Finished ..."
