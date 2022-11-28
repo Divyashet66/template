@@ -1,4 +1,8 @@
 #!/bin/bash
+builder=paketobuildpacks/builder:full
+image_name=todo
+src_folder_name=nodejs-todo/
+
 deployment_metadata_name=todo-app
 replicas=1
 selector_name=todo-app
