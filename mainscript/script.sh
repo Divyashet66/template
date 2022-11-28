@@ -1,27 +1,27 @@
-pack build todo -t gcr.io/tech-rnd-project/todo --builder paketobuildpacks/builder:full
+#!/bin/bash
+source template/config.sh
+pack build $image_name --path $src_folder_name -t $image --builder $builder
 pid=$!
-echo "process 1 running"
 wait $pid
-echo "process 1 done"
-containerId='docker run -d -p 3000:3000 --rm --name todo todo'
-echo "process 2 running"
-echo `${containerId}`
+
+docker run -d -p $container_port:$container_port --rm --name $image_name $image_name
 wait $pid
-echo "process 2 done"
-open "http://localhost:3000"
+
+open "http://localhost:$container_port"
 pid=$!
-echo "process 3 running"
 wait $pid
-echo "process 3 done"
-docker push gcr.io/tech-rnd-project/todo
-echo "process 4 running"
+
+docker push $image
 wait $pid
-echo "process 4 done"
+
 cd template
-echo "process 5 running"
 wait $pid
-echo "process 5 done"
-skaffold run --profile staging
-echo "process 6 running"
+
+skaffold run --profile $profile
 wait $pid
-echo "process 6 done"
+
+cd ..
+pwd
+cp -r template/k8 template/skaffold.yaml $src_folder_name
+cp -r template/Jenkinsfile $src_folder_name
+
