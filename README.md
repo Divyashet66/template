@@ -12,3 +12,5 @@ to give execute permission to maincript
 to build image and deploy it to kubernetes
 `./template/mainscript/script.sh`
 
+to create job
+`sh master/modules/run.sh`
