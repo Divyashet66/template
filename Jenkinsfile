@@ -1,4 +1,3 @@
-
 pipeline {
   agent any
 
@@ -8,8 +7,8 @@ pipeline {
 	
 	environment {
 		PROJECT_ID = 'tech-rnd-project'
-                CLUSTER_NAME = 'demo-cluster'
-                LOCATION = 'us-central1-c'
+                CLUSTER_NAME = 'network18-cluster'
+                LOCATION = 'us-central1-a'
                 CREDENTIALS_ID = 'kubernetes'	
 	}
 	
@@ -25,23 +24,25 @@ pipeline {
                   sh 'npm install'
               }
           }
-	    
+
 	    
 	    stage('Build Docker Image') {
 		    steps {
 			    sh 'whoami'
 			    sh 'sudo chmod 777 /var/run/docker.sock'
 			    
-			    sh 'sudo apt update'
+			    sh ' sudo apt update'
  			    sh 'sudo apt install software-properties-common -y'
- 			    sh 'sudo apt-get install nano'
+			    
+
 			    
 				    
 				sh 'sudo add-apt-repository ppa:cncf-buildpacks/pack-cli'
+			    
  				 sh 'sudo  apt-get update'
  				  sh 'sudo apt-get install pack-cli'
 			   
-				  sh 'pack build app -t gcr.io/tech-rnd-project/faz-todo --builder paketobuildpacks/builder:full'
+				  sh 'pack build todo -t gcr.io/tech-rnd-project/todo --builder paketobuildpacks/builder:full'
 			    
 		    }
 	    }
@@ -51,8 +52,8 @@ pipeline {
 			    script {
 				    echo "Push Docker Image"
 				        sh 'gcloud auth configure-docker'
-				    	sh 'docker push gcr.io/tech-rnd-project/faz-todo'
-				
+				        sh "sudo docker push gcr.io/tech-rnd-project/todo"
+				    
 					sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
 
 					sh "chmod +x kubectl"
@@ -69,8 +70,9 @@ pipeline {
 			    echo "Deployment started ..."
 			    sh 'ls -ltr'
 			    sh 'pwd'
+				
 				echo "Start deployment of deployment.yaml"
-				step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+				step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 			    	echo "Deployment Finished ..."
 			    sh '''
 			    '''
